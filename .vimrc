@@ -25,10 +25,13 @@ Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'wakatime/vim-wakatime'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'junegunn/vim-easy-align'
+Plugin 'alvan/vim-closetag'
+Plugin 'vimwiki/vimwiki'
 "
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
 Plugin 'taglist.vim'
+Plugin 'fcitx.vim'
 "
 " Git plugin not hosted on GitHub
 " Plugin 'git://git.wincent.com/command-t.git'
@@ -65,14 +68,32 @@ set expandtab
 set number
 set hlsearch
 set splitright
-set mouse=a
-set background=dark
+set cursorline
+highlight CursorLine cterm=NONE ctermbg=gray ctermfg=NONE guibg=NONE guifg=NONE
 let g:airline_powerline_fonts = 1 
+let g:gruvbox_italic=1
 colorscheme gruvbox
+"set background=dark
+set ttimeoutlen=100
+
+" ======for vimwiki======
+set nocompatible
+syntax on;
+let g:vimwiki_folding = 'syntax'
+
+" == extended % matching for HTML, LaTeX, and many other languages ==
 runtime macros/matchit.vim
 filetype plugin on
 
-" ========= NERDComment ========
+" ============ YCM =============
+" turn off YCM
+nnoremap <leader>y :let g:ycm_auto_trigger=0<CR>               
+"turn on YCM
+nnoremap <leader>Y :let g:ycm_auto_trigger=1<CR>                
+let g:ycm_auto_trigger = 0
+let g:ycm_cache_omnifunc = 1
+
+" ======== NERDCommenter =======
 let g:NERDSpaceDelims = 1
 let g:NERDCompactSexyComs = 1
 
@@ -88,6 +109,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 " ========== taglist ===========
 let Tlist_Show_One_File=1
 let Tlist_Exit_OnlyWindow=1
+map <C-t> :TlistToggle<CR>
 
 " ======= Vim-easy-align ======
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -98,39 +120,45 @@ nmap ga <Plug>(EasyAlign)
 " ====== 自动补全括号引号 =====
 inoremap ( ()<Esc>i
 inoremap [ []<Esc>i
-inoremap { {<CR>}<Esc>O
-autocmd Syntax html,vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
+autocmd Syntax vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
 inoremap ) <c-r>=ClosePair(')')<CR>
 inoremap ] <c-r>=ClosePair(']')<CR>
-inoremap } <c-r>=CloseBracket()<CR>
 inoremap " <c-r>=QuoteDelim('"')<CR>
 inoremap ' <c-r>=QuoteDelim("'")<CR>
 
-function ClosePair(char)
- if getline('.')[col('.') - 1] == a:char
- return "\<Right>"
- else
- return a:char
- endif
-endf
+inoremap { {}<Esc>i
+inoremap } <c-r>=CloseBracket()<CR>
+inoremap {<CR> {<CR>}<Esc>O
 
 function CloseBracket()
- if match(getline(line('.') + 1), '\s*}') < 0
- return "\<CR>}"
- else
- return "\<Esc>j0f}a"
- endif
+    if getline('.')[col('.') - 1] == "}"
+        return "\<Right>"
+    else
+        if match(getline(line('.') + 1), '\s*}') >= 0
+            return "\<Esc>j0f}a"
+        else
+            return "\<CR>}"
+        endif
+    endif
 endf
+
+function ClosePair(char)
+    if getline('.')[col('.') - 1] == a:char
+        return "\<Right>"
+    else
+        return a:char
+    endif
+endf
+
 
 function QuoteDelim(char)
- let line = getline('.')
- let col = col('.')
- if line[col - 2] == "\\"
- return a:char
- elseif line[col - 1] == a:char
- return "\<Right>"
- else
- return a:char.a:char."\<Esc>i"
- endif
+    let line = getline('.')
+    let col = col('.')
+    if line[col - 2] == "\\"
+        return a:char
+    elseif line[col - 1] == a:char
+        return "\<Right>"
+    else
+        return a:char.a:char."\<Esc>i"
+    endif
 endf
-
