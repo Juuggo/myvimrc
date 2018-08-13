@@ -27,6 +27,7 @@ Plugin 'scrooloose/nerdcommenter'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'alvan/vim-closetag'
 Plugin 'vimwiki/vimwiki'
+Plugin 'Raimondi/delimitMate'
 "
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
@@ -75,6 +76,7 @@ let g:gruvbox_italic=1
 colorscheme gruvbox
 "set background=dark
 set ttimeoutlen=100
+set backspace=indent,eol,start
 
 " ======for vimwiki======
 set nocompatible
@@ -104,7 +106,7 @@ set foldmethod=indent
 " Ctrl+N 打开/关闭
 map <C-n> :NERDTreeToggle<CR>
 " 当所有文件关闭时关闭项目树窗格
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endi
 
 " ========== taglist ===========
 let Tlist_Show_One_File=1
@@ -116,49 +118,3 @@ map <C-t> :TlistToggle<CR>
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
-
-" ====== 自动补全括号引号 =====
-inoremap ( ()<Esc>i
-inoremap [ []<Esc>i
-autocmd Syntax vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
-inoremap ) <c-r>=ClosePair(')')<CR>
-inoremap ] <c-r>=ClosePair(']')<CR>
-inoremap " <c-r>=QuoteDelim('"')<CR>
-inoremap ' <c-r>=QuoteDelim("'")<CR>
-
-inoremap { {}<Esc>i
-inoremap } <c-r>=CloseBracket()<CR>
-inoremap {<CR> {<CR>}<Esc>O
-
-function CloseBracket()
-    if getline('.')[col('.') - 1] == "}"
-        return "\<Right>"
-    else
-        if match(getline(line('.') + 1), '\s*}') >= 0
-            return "\<Esc>j0f}a"
-        else
-            return "\<CR>}"
-        endif
-    endif
-endf
-
-function ClosePair(char)
-    if getline('.')[col('.') - 1] == a:char
-        return "\<Right>"
-    else
-        return a:char
-    endif
-endf
-
-
-function QuoteDelim(char)
-    let line = getline('.')
-    let col = col('.')
-    if line[col - 2] == "\\"
-        return a:char
-    elseif line[col - 1] == a:char
-        return "\<Right>"
-    else
-        return a:char.a:char."\<Esc>i"
-    endif
-endf
