@@ -25,8 +25,9 @@ Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'wakatime/vim-wakatime'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'junegunn/vim-easy-align'
-" Plugin 'alvan/vim-closetag'
+Plugin 'alvan/vim-closetag'
 Plugin 'vimwiki/vimwiki'
+Plugin 'posva/vim-vue'
 "
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
@@ -90,7 +91,7 @@ filetype plugin on
 nnoremap <leader>y :let g:ycm_auto_trigger=0<CR>               
 "turn on YCM
 nnoremap <leader>Y :let g:ycm_auto_trigger=1<CR>                
-let g:ycm_auto_trigger = 0
+let g:ycm_auto_trigger = 1
 let g:ycm_cache_omnifunc = 1
 
 " ======== NERDCommenter =======
@@ -159,4 +160,3 @@ function QuoteDelim(char)
         return a:char.a:char."\<Esc>i"
     endif
 endf
-
